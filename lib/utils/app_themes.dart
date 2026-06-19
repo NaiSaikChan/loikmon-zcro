@@ -1,756 +1,283 @@
 import 'package:flutter/material.dart';
-
 import '../utils/my_colors.dart';
 
-enum AppThemeLight {
-  Style1,
-}
-
-enum AppThemeDark {
-  Style1,
-}
+enum AppThemeLight { Style1 }
+enum AppThemeDark  { Style1 }
 
 /// Returns enum value name without enum class name.
-String enumNameLight(AppThemeLight anyEnum) {
-  return anyEnum.toString().split('.')[1];
-}
+String enumNameLight(AppThemeLight anyEnum) =>
+    anyEnum.toString().split('.')[1];
 
-String enumNameDark(AppThemeDark anyEnum) {
-  return anyEnum.toString().split('.')[1];
-}
+String enumNameDark(AppThemeDark anyEnum) =>
+    anyEnum.toString().split('.')[1];
 
+// ────────────────────────────────────────────────────────────
+//  LIGHT THEME  —  Zcro Modern Minimalist 2025
+// ────────────────────────────────────────────────────────────
 final appThemeDataLight = {
   AppThemeLight.Style1: ThemeData(
     useMaterial3: false,
     fontFamily: 'Style1',
 
-    scaffoldBackgroundColor: const Color.fromARGB(255, 242, 243, 244),
+    // Background — pure near-white with slight blue tint
+    scaffoldBackgroundColor: MyColors.surfaceLight,
 
-    ///ADD THIS
-    dialogTheme: DialogThemeData(
-      backgroundColor: const Color.fromARGB(255, 246, 249, 250),
+    // ── Color Scheme ──────────────────────────────────────
+    colorScheme: ColorScheme.light(
+      primary:   MyColors.accent,
+      onPrimary: Colors.white,
+      secondary: MyColors.accentSoft,
+      surface:   MyColors.cardLight,
+      onSurface: MyColors.textPrimaryLight,
+      error:     MyColors.error,
+    ),
+
+    // ── AppBar ────────────────────────────────────────────
+    appBarTheme: const AppBarTheme(
+      backgroundColor: MyColors.headerLight,
+      elevation:       0,
+      scrolledUnderElevation: 0,
+      centerTitle:     true,
+      titleTextStyle: TextStyle(
+        color:       MyColors.textPrimaryLight,
+        fontSize:    22,
+        fontWeight:  FontWeight.w700,
+        letterSpacing: 0.2,
+      ),
+      iconTheme: IconThemeData(color: MyColors.textPrimaryLight),
+    ),
+
+    // ── Cards ─────────────────────────────────────────────
+    cardTheme: CardThemeData(
+      color:        MyColors.cardLight,
+      elevation:    0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: MyColors.borderLight, width: 1),
       ),
-      titleTextStyle: TextStyle(
-        color: Colors.black,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-      contentTextStyle: TextStyle(
-        color: Colors.black87,
-        fontSize: 14,
-      ),
-    ),
-    tabBarTheme: const TabBarThemeData(
-      labelColor: Color.fromARGB(255, 0, 0, 0),
-      unselectedLabelColor: Colors.grey,
-      indicatorColor: Colors.black,
-      indicatorSize: TabBarIndicatorSize.label,
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.black, // text color
-      ),
+      margin: EdgeInsets.zero,
     ),
 
+    // ── Elevated Button ───────────────────────────────────
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.primary,
-        foregroundColor: const Color.fromARGB(255, 240, 239, 239),
+        backgroundColor: MyColors.accent,
+        foregroundColor: Colors.white,
+        elevation:       0,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
       ),
     ),
 
+    // ── Text Button ───────────────────────────────────────
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: MyColors.accent,
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    ),
+
+    // ── Icon Button ───────────────────────────────────────
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(Colors.black),
+        foregroundColor: MaterialStateProperty.all(MyColors.textPrimaryLight),
       ),
     ),
 
-    ///IMPORTANT FOR MODAL / BOTTOM SHEETS
-    bottomSheetTheme: BottomSheetThemeData(
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    // ── Tab Bar ───────────────────────────────────────────
+    tabBarTheme: const TabBarThemeData(
+      labelColor:           MyColors.accent,
+      unselectedLabelColor: MyColors.textSecondaryLight,
+      indicatorColor:       MyColors.accent,
+      indicatorSize:        TabBarIndicatorSize.label,
+      labelStyle:   TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+    ),
+
+    // ── Bottom Sheet ──────────────────────────────────────
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: MyColors.cardLight,
+      elevation:       0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
     ),
 
-    ///MATERIAL COLORS (VERY IMPORTANT)
-    colorScheme: ColorScheme.light(
-      primary: MyColors.primary,
-      onPrimary: Colors.white,
-      surface: Colors.white,
-      onSurface: Colors.black,
+    // ── Dialog ────────────────────────────────────────────
+    dialogTheme: DialogThemeData(
+      backgroundColor: MyColors.cardLight,
+      elevation:       0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      titleTextStyle: const TextStyle(
+        color: MyColors.textPrimaryLight,
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+      ),
+      contentTextStyle: const TextStyle(
+        color: MyColors.textSecondaryLight,
+        fontSize: 14,
+        height: 1.5,
+      ),
     ),
 
-    appBarTheme: const AppBarTheme(
-      color: Color.fromARGB(255, 248, 246, 248),
-      elevation: 0,
-      titleTextStyle: TextStyle(color: Colors.black),
-      iconTheme: IconThemeData(color: Colors.black),
+    // ── Divider ───────────────────────────────────────────
+    dividerTheme: const DividerThemeData(
+      color:     MyColors.borderLight,
+      thickness: 1,
+      space:     1,
     ),
 
-    cardTheme: const CardThemeData(
-      color: Color.fromARGB(255, 241, 240, 240),
-    ),
+    // ── Icon ─────────────────────────────────────────────
+    iconTheme: const IconThemeData(color: MyColors.textPrimaryLight),
 
-    iconTheme: const IconThemeData(color: Colors.black),
-  ),
-  /*AppThemeLight.keng: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'keng',
-    scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(
-      elevation: 0,
-      color: MyColors.primary,
-      titleTextStyle: TextStyle(color: Colors.black),
-      iconTheme: IconThemeData(
-        color: Colors.black,
+    // ── Input (search bars etc.) ──────────────────────────
+    inputDecorationTheme: InputDecorationTheme(
+      filled:      true,
+      fillColor:   const Color(0xFFF1F3F8),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide:   BorderSide.none,
       ),
-    ),
-    cardTheme: CardTheme(
-      color: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.black,
-    ),
-    tabBarTheme: TabBarTheme(
-        labelColor: Colors.black, unselectedLabelColor: Colors.grey),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        fontFamily: 'keng',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        fontFamily: 'keng',
-      ),
-      subtitle2: TextStyle(
-        fontFamily: 'keng',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        fontFamily: 'keng',
-      ),
-      headline3: TextStyle(
-        fontFamily: 'keng',
-      ),
-      headline2: TextStyle(
-        fontFamily: 'keng',
-      ),
-      headline1: TextStyle(
-        fontFamily: 'keng',
-      ),
-      subtitle1: TextStyle(
-        fontFamily: 'keng',
-      ),
-      bodyText2: TextStyle(
-        fontFamily: 'keng',
-      ),
-      bodyText1: TextStyle(
-        fontFamily: 'keng',
-      ),
-      overline: TextStyle(
-        fontFamily: 'keng',
-      ),
-      caption: TextStyle(
-        fontFamily: 'keng',
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
   ),
-  AppThemeLight.hsi: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'hsi',
-    scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(
-      color: MyColors.primary,
-      elevation: 0,
-      titleTextStyle: TextStyle(color: Colors.black),
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
-    ),
-    cardTheme: CardTheme(
-      color: Colors.white,
-    ),
-    tabBarTheme: TabBarTheme(
-        labelColor: Colors.black, unselectedLabelColor: Colors.grey),
-    iconTheme: IconThemeData(
-      color: Colors.black,
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        fontFamily: 'hsi',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      subtitle2: TextStyle(
-        fontFamily: 'hsi',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      headline3: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      headline2: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      headline1: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      subtitle1: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      bodyText2: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      bodyText1: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      overline: TextStyle(
-        fontFamily: 'hsi',
-      ),
-      caption: TextStyle(
-        fontFamily: 'hsi',
-      ),
-    ),
-  ),
-  AppThemeLight.hopong: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    fontFamily: 'hopong',
-    scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(
-      color: MyColors.primary,
-      elevation: 0,
-      titleTextStyle: TextStyle(color: Colors.black),
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
-    ),
-    tabBarTheme: TabBarTheme(
-        labelColor: Colors.black, unselectedLabelColor: Colors.grey),
-    cardTheme: CardTheme(
-      color: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.black,
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        fontFamily: 'hopong',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      subtitle2: TextStyle(
-        fontFamily: 'hopong',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      headline3: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      headline2: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      headline1: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      subtitle1: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      bodyText2: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      bodyText1: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      overline: TextStyle(
-        fontFamily: 'hopong',
-      ),
-      caption: TextStyle(
-        fontFamily: 'hopong',
-      ),
-    ),
-  ),
-  AppThemeLight.beautifulword: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'beautifulword',
-    scaffoldBackgroundColor: Colors.white,
-    appBarTheme: AppBarTheme(
-      color: MyColors.primary,
-      elevation: 0,
-      titleTextStyle: TextStyle(color: Colors.black),
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
-    ),
-    tabBarTheme: TabBarTheme(
-        labelColor: Colors.black, unselectedLabelColor: Colors.grey),
-    cardTheme: CardTheme(
-      color: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.black,
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        fontFamily: 'beautifulword',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      subtitle2: TextStyle(
-        fontFamily: 'beautifulword',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      headline3: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      headline2: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      headline1: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      subtitle1: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      bodyText2: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      bodyText1: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      overline: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-      caption: TextStyle(
-        fontFamily: 'beautifulword',
-      ),
-    ),
-  ),*/
 };
 
+// ────────────────────────────────────────────────────────────
+//  DARK THEME  —  Zcro Modern Minimalist 2025
+// ────────────────────────────────────────────────────────────
 final appThemeDataDark = {
   AppThemeDark.Style1: ThemeData(
     useMaterial3: false,
     fontFamily: 'Style1',
 
-    scaffoldBackgroundColor: const Color.fromARGB(255, 10, 18, 35),
+    // Background — very deep navy
+    scaffoldBackgroundColor: MyColors.surfaceDark,
 
-    ///IMPROVED DIALOG THEME
-    dialogTheme: DialogThemeData(
-      backgroundColor: const Color.fromARGB(251, 19, 33, 37),
+    // ── Color Scheme ──────────────────────────────────────
+    colorScheme: ColorScheme.dark(
+      primary:   MyColors.accentOnDark,
+      onPrimary: Colors.white,
+      secondary: MyColors.accentSoft,
+      surface:   MyColors.cardDark,
+      onSurface: MyColors.textPrimaryDark,
+      error:     MyColors.error,
+    ),
+
+    // ── AppBar ────────────────────────────────────────────
+    appBarTheme: AppBarTheme(
+      backgroundColor: MyColors.headerdark,
+      elevation:       0,
+      scrolledUnderElevation: 0,
+      centerTitle:     true,
+      titleTextStyle: const TextStyle(
+        color:       MyColors.textPrimaryDark,
+        fontSize:    22,
+        fontWeight:  FontWeight.w700,
+        letterSpacing: 0.2,
+      ),
+      iconTheme: const IconThemeData(color: MyColors.textPrimaryDark),
+    ),
+
+    // ── Cards ─────────────────────────────────────────────
+    cardTheme: CardThemeData(
+      color:     MyColors.cardDark,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: MyColors.borderDark, width: 1),
       ),
-      titleTextStyle: const TextStyle(
-        color: Color.fromARGB(255, 239, 241, 242),
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-      contentTextStyle: const TextStyle(
-        color: Color.fromARGB(255, 198, 199, 200),
-        fontSize: 14,
-      ),
-    ),
-    tabBarTheme: const TabBarThemeData(
-      labelColor: Color.fromARGB(255, 239, 241, 242),
-      unselectedLabelColor: Colors.grey,
-      indicatorColor: Color.fromARGB(255, 239, 241, 242),
-      indicatorSize: TabBarIndicatorSize.label,
+      margin: EdgeInsets.zero,
     ),
 
-    ///BOTTOM SHEET
-    bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: Color.fromARGB(255, 27, 31, 50),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: const Color.fromARGB(255, 239, 241, 242),
-      ),
-    ),
-
+    // ── Elevated Button ───────────────────────────────────
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: MyColors.primary,
-        foregroundColor: const Color.fromARGB(255, 239, 241, 242),
+        backgroundColor: MyColors.accentOnDark,
+        foregroundColor: Colors.white,
+        elevation:       0,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
       ),
     ),
 
+    // ── Text Button ───────────────────────────────────────
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: MyColors.accentOnDark,
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    ),
+
+    // ── Icon Button ───────────────────────────────────────
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(
-        foregroundColor: MaterialStateProperty.all(
-          Color.fromARGB(255, 237, 241, 244),
-        ),
+        foregroundColor: MaterialStateProperty.all(MyColors.textPrimaryDark),
       ),
     ),
 
-    ///COLOR SCHEME (VERY IMPORTANT)
-    colorScheme: ColorScheme.dark(
-      primary: MyColors.primary,
-      onPrimary: const Color.fromARGB(255, 239, 241, 242),
-      surface: Color.fromARGB(255, 27, 31, 50),
-      onSurface: const Color.fromARGB(255, 239, 241, 242),
+    // ── Tab Bar ───────────────────────────────────────────
+    tabBarTheme: const TabBarThemeData(
+      labelColor:           MyColors.accentOnDark,
+      unselectedLabelColor: MyColors.textSecondaryDark,
+      indicatorColor:       MyColors.accentOnDark,
+      indicatorSize:        TabBarIndicatorSize.label,
+      labelStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+      unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
     ),
 
-    appBarTheme: AppBarTheme(
-      elevation: 0,
-      color: MyColors.headerdark,
-      iconTheme: const IconThemeData(
-        color: Color.fromARGB(255, 237, 241, 244),
+    // ── Bottom Sheet ──────────────────────────────────────
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: Color(0xFF1A2035),
+      elevation:       0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
     ),
 
-    cardTheme: const CardThemeData(
-      color: Color.fromARGB(255, 27, 31, 50),
+    // ── Dialog ────────────────────────────────────────────
+    dialogTheme: const DialogThemeData(
+      backgroundColor: Color(0xFF1A2035),
+      elevation:       0,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      titleTextStyle: TextStyle(
+        color: MyColors.textPrimaryDark,
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+      ),
+      contentTextStyle: TextStyle(
+        color: MyColors.textSecondaryDark,
+        fontSize: 14,
+        height: 1.5,
+      ),
     ),
 
-    iconTheme: const IconThemeData(
-      color: Color.fromARGB(255, 237, 241, 244),
+    // ── Divider ───────────────────────────────────────────
+    dividerTheme: const DividerThemeData(
+      color:     MyColors.borderDark,
+      thickness: 1,
+      space:     1,
+    ),
+
+    // ── Icon ─────────────────────────────────────────────
+    iconTheme: const IconThemeData(color: MyColors.textPrimaryDark),
+
+    // ── Input ─────────────────────────────────────────────
+    inputDecorationTheme: InputDecorationTheme(
+      filled:    true,
+      fillColor: const Color(0xFF1E2840),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide:   BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
   ),
-  /* AppThemeDark.keng: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'keng',
-    scaffoldBackgroundColor: Colors.grey[900],
-    appBarTheme: AppBarTheme(
-      color: MyColors.headerdark,
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
-    ),
-    dialogBackgroundColor: Colors.grey[900],
-    cardTheme: CardTheme(
-      color: Colors.grey[900],
-    ),
-    listTileTheme: ListTileThemeData(
-      iconColor: Colors.white,
-      textColor: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.white,
-    ),
-    drawerTheme: DrawerThemeData(
-      backgroundColor: Colors.grey[900],
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      subtitle2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      headline3: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      headline2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      headline1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      subtitle1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      bodyText2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      bodyText1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      overline: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-      caption: TextStyle(
-        color: Colors.white,
-        fontFamily: 'keng',
-      ),
-    ),
-  ),
-  AppThemeDark.hsi: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'hsi',
-    scaffoldBackgroundColor: Colors.grey[900],
-    appBarTheme: AppBarTheme(
-      color: MyColors.headerdark,
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
-    ),
-    dialogBackgroundColor: Colors.grey[900],
-    cardTheme: CardTheme(
-      color: Colors.grey[900],
-    ),
-    listTileTheme: ListTileThemeData(
-      iconColor: Colors.white,
-      textColor: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.white,
-    ),
-    drawerTheme: DrawerThemeData(
-      backgroundColor: Colors.grey[900],
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      subtitle2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      headline3: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      headline2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      headline1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      subtitle1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      bodyText2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      bodyText1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      overline: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-      caption: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hsi',
-      ),
-    ),
-  ),
-  AppThemeDark.hopong: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'hopong',
-    scaffoldBackgroundColor: Colors.grey[900],
-    appBarTheme: AppBarTheme(
-      color: MyColors.headerdark,
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
-    ),
-    dialogBackgroundColor: Colors.grey[900],
-    cardTheme: CardTheme(
-      color: Colors.grey[900],
-    ),
-    listTileTheme: ListTileThemeData(
-      iconColor: Colors.white,
-      textColor: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.white,
-    ),
-    drawerTheme: DrawerThemeData(
-      backgroundColor: Colors.grey[900],
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      subtitle2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      headline3: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      headline2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      headline1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      subtitle1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      bodyText2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      bodyText1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      overline: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-      caption: TextStyle(
-        color: Colors.white,
-        fontFamily: 'hopong',
-      ),
-    ),
-  ),
-  AppThemeDark.beautifulword: ThemeData(
-    //primarySwatch: Colors.blue,
-    // brightness: Brightness.light,
-    useMaterial3: false,
-    fontFamily: 'beautifulword',
-    scaffoldBackgroundColor: Colors.grey[900],
-    appBarTheme: AppBarTheme(
-      color: MyColors.headerdark,
-      iconTheme: IconThemeData(
-        color: Colors.white,
-      ),
-    ),
-    dialogBackgroundColor: Colors.grey[900],
-    cardTheme: CardTheme(
-      color: Colors.grey[900],
-    ),
-    listTileTheme: ListTileThemeData(
-      iconColor: Colors.white,
-      textColor: Colors.white,
-    ),
-    iconTheme: IconThemeData(
-      color: Colors.white,
-    ),
-    drawerTheme: DrawerThemeData(
-      backgroundColor: Colors.grey[900],
-    ),
-    textTheme: TextTheme(
-      headline6: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-        fontSize: 20.0,
-      ),
-      headline5: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      subtitle2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-        fontSize: 18.0,
-      ),
-      headline4: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      headline3: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      headline2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      headline1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      subtitle1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      bodyText2: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      bodyText1: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      overline: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-      caption: TextStyle(
-        color: Colors.white,
-        fontFamily: 'beautifulword',
-      ),
-    ),
-  ),*/
 };

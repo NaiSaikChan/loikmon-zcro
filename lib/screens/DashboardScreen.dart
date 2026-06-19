@@ -22,6 +22,7 @@ import 'package:loikmon/screens/LeaguesScreen.dart';
 import 'package:loikmon/screens/OthersBooksScreen.dart';
 import 'package:loikmon/utils/TextStyles.dart';
 import 'package:loikmon/utils/Toasts.dart';
+import 'package:loikmon/utils/my_colors.dart';
 import 'package:loikmon/utils/network_image.dart';
 import 'package:loikmon/utils/rounded_bordered_container.dart';
 import 'package:lottie/lottie.dart';
@@ -40,7 +41,6 @@ class DashboardScreen extends StatefulWidget {
 
 class DashboardScreenRouteState extends State<DashboardScreen> {
   late DashboardModel dashboardModel;
-  bool isSubscribed = false;
 
   onRetryClick() {
     dashboardModel.loadItems();
@@ -55,494 +55,397 @@ class DashboardScreenRouteState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     dashboardModel = Provider.of<DashboardModel>(context);
-    double width = MediaQuery.of(context).size.width;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color sectionBg =
+        isDark ? MyColors.surfaceDark : MyColors.surfaceLight;
+
     if (dashboardModel.isLoading) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  width: 500,
-                  height: 500,
-                  child: Lottie.asset('assets/lottie/animation7.json'),
-                ),
-                // Container(
-                //   width: 380,
-                //   height: 200,
-                //   child: Lottie.asset('assets/lottie/Animation7.json'),
-                // ),
-              ],
+            Container(
+              width: 320,
+              height: 320,
+              child: Lottie.asset('assets/lottie/animation7.json'),
             ),
           ],
         ),
       );
-      // return Container(
-      //   width: double.infinity,
-      //   // color: Colors.white,
-      //   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
-      //   child: Column(
-      //     mainAxisSize: MainAxisSize.max,
-      //     children: <Widget>[
-      //       Expanded(
-      //         child: Shimmer.fromColors(
-      //           baseColor: Colors.grey[300]!,
-      //           highlightColor: Colors.grey[600]!,
-      //           enabled: true,
-      //           child: ListView.builder(
-      //             itemBuilder: (_, __) => Padding(
-      //               padding: const EdgeInsets.only(bottom: 8.0),
-      //               child: Row(
-      //                 crossAxisAlignment: CrossAxisAlignment.start,
-      //                 children: [
-      //                   Container(
-      //                     width: 48.0,
-      //                     height: 48.0,
-      //                     color: Colors.grey[600],
-      //                   ),
-      //                   const Padding(
-      //                     padding: EdgeInsets.symmetric(horizontal: 8.0),
-      //                   ),
-      //                   Expanded(
-      //                     child: Column(
-      //                       crossAxisAlignment: CrossAxisAlignment.start,
-      //                       children: <Widget>[
-      //                         Container(
-      //                           width: double.infinity,
-      //                           height: 8.0,
-      //                           color: Colors.grey[600],
-      //                         ),
-      //                         const Padding(
-      //                           padding: EdgeInsets.symmetric(vertical: 2.0),
-      //                         ),
-      //                         Container(
-      //                           width: double.infinity,
-      //                           height: 8.0,
-      //                           color: Colors.grey[600],
-      //                         ),
-      //                         const Padding(
-      //                           padding: EdgeInsets.symmetric(vertical: 2.0),
-      //                         ),
-      //                         Container(
-      //                           width: 40.0,
-      //                           height: 8.0,
-      //                           color: Colors.grey[600],
-      //                         ),
-      //                       ],
-      //                     ),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //             itemCount: 12,
-      //           ),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // );
     } else if (dashboardModel.isError) {
       return NoitemScreen(
           title: t.oops, message: t.dataloaderror, onClick: onRetryClick);
-    } else
-      return SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: WaterDropHeader(),
-        footer: CustomFooter(
-          builder: (BuildContext context, LoadStatus? mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text(t.pulluploadmore);
-            } else if (mode == LoadStatus.loading) {
-              body = CupertinoActivityIndicator();
-            } else if (mode == LoadStatus.failed) {
-              body = Text(t.loadfailedretry);
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text(t.releaseloadmore);
-            } else {
-              body = Text(t.nomoredata);
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child: body),
-            );
-          },
-        ),
-        controller: dashboardModel.refreshController,
-        onRefresh: () {
-          dashboardModel.fetchItems();
+    }
+
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: true,
+      header: WaterDropHeader(),
+      footer: CustomFooter(
+        builder: (BuildContext context, LoadStatus? mode) {
+          Widget body;
+          if (mode == LoadStatus.idle) {
+            body = Text(t.pulluploadmore);
+          } else if (mode == LoadStatus.loading) {
+            body = const CupertinoActivityIndicator();
+          } else if (mode == LoadStatus.failed) {
+            body = Text(t.loadfailedretry);
+          } else if (mode == LoadStatus.canLoading) {
+            body = Text(t.releaseloadmore);
+          } else {
+            body = Text(t.nomoredata);
+          }
+          return SizedBox(height: 55, child: Center(child: body));
         },
-        onLoading: null,
-        child: Container(
-          //color: Colors.white,
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 20, right: 20),
-                  height: 450.0,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        //color: Colors.transparent,
-                        margin: EdgeInsets.only(top: 5),
-                        child: FlutterCarousel(
-                          options: CarouselOptions(
-                            height: 450.0,
-                            showIndicator: true,
-                            enableInfiniteScroll: true,
-                            enlargeCenterPage: true,
-                            viewportFraction: 0.8,
-                            autoPlay: true,
-                            slideIndicator: CircularSlideIndicator(),
-                          ),
-                          items: dashboardModel.sliders!.map((slider) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return InkWell(
-                                  onTap: () async {
-                                    if (slider.type == "link") {
-                                      print(
-                                        "sliderlink is ==== " + slider.link!,
-                                      );
-                                      if (await canLaunchUrl(
-                                        Uri.parse(slider.link!),
-                                      )) {
-                                        await launchUrl(
-                                          Uri.parse(slider.link!),
-                                        );
-                                      } else {
-                                        print('Unable to open URL link');
-                                      }
-                                    } else if (slider.type == "messenger") {
-                                      if (await canLaunchUrl(
-                                        Uri.parse(slider.link!),
-                                      )) {
-                                        await launchUrl(
-                                          Uri.parse(slider.link!),
-                                        );
-                                      } else {
-                                        print('Unable to open URL link');
-                                      }
-                                    } else {
-                                      if (slider.item == null) {
-                                        Toasts.info(
-                                          context,
-                                          "",
-                                          "Cannot open this at the moment",
-                                        );
-                                        return;
-                                      } else if (slider.type == "article") {
-                                        List<Articles>? articles = [];
-                                        articles.add(slider.item as Articles);
-                                        Navigator.pushNamed(
-                                          context,
-                                          ArticleViewerScreen.routeName,
-                                          arguments: ScreenArguements(
-                                            position: 0,
-                                            items: slider.item,
-                                            check: false,
-                                            itemsList: articles,
-                                          ),
-                                        );
-                                        return;
-                                      } else if (slider.type == "author") {
-                                        Navigator.pushNamed(
-                                          context,
-                                          AuthorsListScreen.routeName,
-                                          arguments: ScreenArguements(
-                                            position: 0,
-                                            items: slider.item,
-                                            check: false,
-                                          ),
-                                        );
-                                        return;
-                                      }
-                                      Navigator.pushNamed(
-                                        context,
-                                        EbooksViewerScreen.routeName,
-                                        arguments: ScreenArguements(
-                                          position: 0,
-                                          items: slider.item,
-                                          check: false,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  child: Card(
-                                    elevation: 0,
-                                    child: Container(
-                                      //color: colors[index],
-                                      padding: const EdgeInsets.all(0.0),
-                                      child: Stack(
-                                        children: [
-                                          RoundedContainer(
-                                            //color: colors[index],
-                                            borderRadius: BorderRadius.circular(
-                                              5.0,
-                                            ),
-                                            margin: const EdgeInsets.only(
-                                              bottom: 0,
-                                            ),
-                                            padding: EdgeInsets.only(
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                            ),
-                                            child: Column(
-                                              children: <Widget>[
-                                                Expanded(
-                                                  //flex: 3,
-                                                  child: Container(
-                                                    //color: MyColors.backgroundColor,
-                                                    child: PNetworkImage(
-                                                      slider.thumbnail,
-                                                      fit: BoxFit.fill,
-                                                      height: double.infinity,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+      ),
+      controller: dashboardModel.refreshController,
+      onRefresh: () => dashboardModel.fetchItems(),
+      onLoading: null,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // ── Hero Carousel ──────────────────────────────────
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: SizedBox(
+                  height: 420,
+                  child: FlutterCarousel(
+                    options: CarouselOptions(
+                      height:              420,
+                      showIndicator:       true,
+                      enableInfiniteScroll: true,
+                      enlargeCenterPage:   false,
+                      viewportFraction:    1.0,
+                      autoPlay:            true,
+                      autoPlayInterval:    const Duration(seconds: 4),
+                      slideIndicator:      CircularSlideIndicator(
+                        slideIndicatorOptions: const SlideIndicatorOptions(
+                          currentIndicatorColor: MyColors.accent,
+                          indicatorBackgroundColor: Colors.white54,
+                          indicatorRadius: 5,
+                          itemSpacing:     14,
+                        ),
+                      ),
+                    ),
+                    items: dashboardModel.sliders!.map((slider) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () async {
+                              await _handleSliderTap(context, slider);
+                            },
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                // Cover image
+                                PNetworkImage(
+                                  slider.thumbnail,
+                                  fit:    BoxFit.cover,
+                                  height: double.infinity,
+                                ),
+                                // Gradient scrim at bottom
+                                Positioned.fill(
+                                  child: DecoratedBox(
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin:  Alignment.bottomCenter,
+                                        end:    Alignment.topCenter,
+                                        stops:  [0, 0.45],
+                                        colors: [
+                                          Color(0xD9000000),
+                                          Colors.transparent,
                                         ],
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Container(height: 10),
-                header(t.authors, () {
-                  Navigator.of(context).pushNamed(AuthorsScreen.routeName);
-                }),
-                AuthorsListView(dashboardModel.bookAuthors!),
-                Container(height: 15),
-                header(t.categories, () {
-                  Navigator.of(context).pushNamed(CategoriesScreen.routeName);
-                }),
-                Container(height: 0),
-                CategoriesListView(dashboardModel.categories!),
-                Container(height: 15),
-                header(t.leagues, () {
-                  Navigator.of(context).pushNamed(LeaguesScreen.routeName);
-                }),
-                LeagueListView(dashboardModel.leagues!),
-                Container(height: 15),
-                header(t.newarticles, () {
-                  Navigator.of(context).pushNamed(ArticlesScreen.routeName,
-                      arguments: new ScreenArguements(position: 0));
-                }),
-                ArticlesListView(dashboardModel.newarticles!),
-                Container(height: 15),
-                header(t.newbooks, () {
-                  Navigator.of(context).pushNamed(OthersBooksScreen.routeName,
-                      arguments: new ScreenArguements(position: 0));
-                }),
-                BooksListView(dashboardModel.newbooks!),
-
-                // Container(height: 15),
-                // header(t.freearticle, () {
-                //   Navigator.of(context).pushNamed(ArticlesScreen.routeName,
-                //       arguments: new ScreenArguements(position: 4));
-                // }),
-                // ArticlesListView(dashboardModel.freearticles!),
-                Container(height: 20),
-                header(t.populararticles, () {
-                  Navigator.of(context).pushNamed(ArticlesScreen.routeName,
-                      arguments: new ScreenArguements(position: 1));
-                }),
-                ArticlesListView(dashboardModel.populararticles!),
-                ///////////
-                Container(height: 20),
-                header(t.popularbooks, () {
-                  Navigator.of(context).pushNamed(OthersBooksScreen.routeName,
-                      arguments: new ScreenArguements(position: 2));
-                }),
-                BooksListView(dashboardModel.popularbooks!),
-
-                Container(height: 10),
-                // header(t.audio, () {
-                //   Navigator.of(context).pushNamed(ArticlesScreen.routeName,
-                //       arguments: new ScreenArguements(position: 5));
-                // }),
-                // ArticlesListView(dashboardModel.audioarticles!),
-                // =======================
-// COLLECTIONS
-// =======================
-                if (dashboardModel.collections != null &&
-                    dashboardModel.collections!.isNotEmpty) ...[
-                  Container(height: 15),
-                  header(t.collection, () {
-                    // TODO: navigate to collections screen
-                    Navigator.of(context).pushNamed(
-                      CollectionsScreen.routeName,
-                    );
-                  }),
-                  Container(
-                    height: 180,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: dashboardModel.collections!.length,
-                      itemBuilder: (context, index) {
-                        var item = dashboardModel.collections![index];
-
-                        return InkWell(
-                          onTap: () {
-                            // TODO: open collection details
-                            Navigator.of(context)
-                                .pushNamed(CollectionDetailsScreen.routeName,
-                                    arguments: ScreenArguements(
-                                      position: item.id,
-                                    ));
-                          },
-                          child: Container(
-                            width: 250,
-                            margin: EdgeInsets.only(left: 15),
-                            child: Stack(
-                              children: [
-                                // IMAGE
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: PNetworkImage(
-                                    item.coverImage,
-                                    fit: BoxFit.cover,
-                                    height: 160,
-                                    width: double.infinity,
-                                  ),
-                                ),
-
-                                // DARK OVERLAY
-                                Container(
-                                  height: 180,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        Colors.black.withOpacity(0.7),
-                                        Colors.transparent,
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                                // TEXT
-                                Positioned(
-                                  bottom: 0,
-                                  left: 12,
-                                  right: 12,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.title ?? "",
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyles.display1(context)
-                                            .copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "${item.bookCount ?? 0} books",
-                                        style: TextStyles.display1(context)
-                                            .copyWith(
-                                          color: Colors.white70,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      );
+                    }).toList(),
                   ),
-                ],
-                // Container(height: 15),
-                // header(t.popularbooks, () {
-                //   Navigator.of(context).pushNamed(OthersBooksScreen.routeName,
-                //       arguments: new ScreenArguements(position: 2));
-                // }),
-                // BooksListView(dashboardModel.popularbooks!),
-                // Container(height: 15),
-                // header(t.recommended, () {
-                //   Navigator.of(context).pushNamed(OthersBooksScreen.routeName,
-                //       arguments: new ScreenArguements(position: 1));
-                // }),
-                // BooksListView(dashboardModel.recommended!),
-                Container(height: 20),
-              ],
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 28),
+
+            // ── Authors ────────────────────────────────────────
+            _sectionHeader(context, t.authors, () {
+              Navigator.of(context).pushNamed(AuthorsScreen.routeName);
+            }),
+            AuthorsListView(dashboardModel.bookAuthors!),
+            const SizedBox(height: 28),
+
+            // ── Categories ─────────────────────────────────────
+            _sectionHeader(context, t.categories, () {
+              Navigator.of(context).pushNamed(CategoriesScreen.routeName);
+            }),
+            CategoriesListView(dashboardModel.categories!),
+            const SizedBox(height: 28),
+
+            // ── Leagues ────────────────────────────────────────
+            _sectionHeader(context, t.leagues, () {
+              Navigator.of(context).pushNamed(LeaguesScreen.routeName);
+            }),
+            LeagueListView(dashboardModel.leagues!),
+            const SizedBox(height: 28),
+
+            // ── New Articles ───────────────────────────────────
+            _sectionHeader(context, t.newarticles, () {
+              Navigator.of(context).pushNamed(
+                ArticlesScreen.routeName,
+                arguments: ScreenArguements(position: 0),
+              );
+            }),
+            ArticlesListView(dashboardModel.newarticles!),
+            const SizedBox(height: 28),
+
+            // ── New Books ──────────────────────────────────────
+            _sectionHeader(context, t.newbooks, () {
+              Navigator.of(context).pushNamed(
+                OthersBooksScreen.routeName,
+                arguments: ScreenArguements(position: 0),
+              );
+            }),
+            BooksListView(dashboardModel.newbooks!),
+            const SizedBox(height: 28),
+
+            // ── Popular Articles ───────────────────────────────
+            _sectionHeader(context, t.populararticles, () {
+              Navigator.of(context).pushNamed(
+                ArticlesScreen.routeName,
+                arguments: ScreenArguements(position: 1),
+              );
+            }),
+            ArticlesListView(dashboardModel.populararticles!),
+            const SizedBox(height: 28),
+
+            // ── Popular Books ──────────────────────────────────
+            _sectionHeader(context, t.popularbooks, () {
+              Navigator.of(context).pushNamed(
+                OthersBooksScreen.routeName,
+                arguments: ScreenArguements(position: 2),
+              );
+            }),
+            BooksListView(dashboardModel.popularbooks!),
+            const SizedBox(height: 28),
+
+            // ── Collections ────────────────────────────────────
+            if (dashboardModel.collections != null &&
+                dashboardModel.collections!.isNotEmpty) ...[
+              _sectionHeader(context, t.collection, () {
+                Navigator.of(context).pushNamed(CollectionsScreen.routeName);
+              }),
+              _CollectionsRow(collections: dashboardModel.collections!),
+              const SizedBox(height: 28),
+            ],
+
+            const SizedBox(height: 16),
+          ],
         ),
-      );
+      ),
+    );
   }
 
-  Widget header(String title, Function onclick) {
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.only(left: 20, right: 0),
+  // ── Section header widget ────────────────────────────────
+  Widget _sectionHeader(
+      BuildContext context, String title, VoidCallback onSeeAll) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
-        children: <Widget>[
+        children: [
+          // Accent pip
+          Container(
+            width:  4,
+            height: 20,
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              color:        MyColors.accent,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           Expanded(
             child: Text(
               title,
               style: TextStyles.display5(context).copyWith(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+                fontSize:   17,
+                fontWeight: FontWeight.w700,
+                color: isDark
+                    ? MyColors.textPrimaryDark
+                    : MyColors.textPrimaryLight,
               ),
             ),
           ),
-          MaterialButton(
-            elevation: 0,
-            textColor: Colors.grey[200],
-            color: const Color.fromARGB(255, 95, 95, 95),
-            height: 0,
-            child: Icon(Icons.arrow_right_alt),
-            minWidth: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
+          // "See all" text button
+          GestureDetector(
+            onTap: onSeeAll,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Row(
+                children: [
+                  Text(
+                    t.viewall,
+                    style: TextStyle(
+                      fontSize:   13,
+                      fontWeight: FontWeight.w600,
+                      color:      MyColors.accent,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size:  12,
+                    color: MyColors.accent,
+                  ),
+                ],
+              ),
             ),
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            onPressed: () {
-              //Navigator.of(context)
-              //   .pushNamed(Authos.routeName);
-              onclick();
-            },
           ),
-          Container(
-            width: 5,
-          )
         ],
       ),
     );
   }
 
-  List<Color?> colors = [
-    Colors.purple,
-    Colors.teal,
-    Colors.deepOrange,
-    Colors.purple,
-    Colors.lime[700],
-    Colors.blueGrey[700]
-  ];
+  // ── Slider tap handler ────────────────────────────────────
+  Future<void> _handleSliderTap(BuildContext context, slider) async {
+    if (slider.type == "link" || slider.type == "messenger") {
+      final uri = Uri.parse(slider.link ?? '');
+      if (await canLaunchUrl(uri)) await launchUrl(uri);
+      return;
+    }
+    if (slider.item == null) {
+      Toasts.info(context, '', 'Cannot open this at the moment');
+      return;
+    }
+    if (slider.type == "article") {
+      final List<Articles> articles = [slider.item as Articles];
+      Navigator.pushNamed(
+        context,
+        ArticleViewerScreen.routeName,
+        arguments: ScreenArguements(
+            position: 0, items: slider.item, check: false, itemsList: articles),
+      );
+    } else if (slider.type == "author") {
+      Navigator.pushNamed(
+        context,
+        AuthorsListScreen.routeName,
+        arguments:
+            ScreenArguements(position: 0, items: slider.item, check: false),
+      );
+    } else {
+      Navigator.pushNamed(
+        context,
+        EbooksViewerScreen.routeName,
+        arguments:
+            ScreenArguements(position: 0, items: slider.item, check: false),
+      );
+    }
+  }
+}
+
+// ── Collections horizontal row (extracted for clarity) ──────
+class _CollectionsRow extends StatelessWidget {
+  final List collections;
+  const _CollectionsRow({required this.collections});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 190,
+      child: ListView.separated(
+        scrollDirection:   Axis.horizontal,
+        padding:           const EdgeInsets.symmetric(horizontal: 24),
+        itemCount:         collections.length,
+        separatorBuilder:  (_, __) => const SizedBox(width: 16),
+        itemBuilder: (context, index) {
+          final item = collections[index];
+          return InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                CollectionDetailsScreen.routeName,
+                arguments: ScreenArguements(position: item.id),
+              );
+            },
+            child: SizedBox(
+              width: 240,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Cover
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: PNetworkImage(
+                      item.coverImage,
+                      fit:    BoxFit.cover,
+                      height: 190,
+                      width:  240,
+                    ),
+                  ),
+                  // Gradient overlay
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: const DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin:  Alignment.bottomCenter,
+                            end:    Alignment.topCenter,
+                            stops:  [0, 0.55],
+                            colors: [
+                              Color(0xCC000000),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Text overlay
+                  Positioned(
+                    bottom: 14,
+                    left:   14,
+                    right:  14,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          item.title ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color:      Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize:   15,
+                            height:     1.3,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${item.bookCount ?? 0} books',
+                          style: const TextStyle(
+                            color:    Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

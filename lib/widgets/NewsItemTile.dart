@@ -1,16 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:loikmon/models/Articles.dart';
+import 'package:loikmon/models/ScreenArguements.dart';
 import 'package:loikmon/providers/AppStateManager.dart';
 import 'package:loikmon/providers/ArticleBookmarksModel.dart';
 import 'package:loikmon/screens/ArticleViewerScreen.dart';
 import 'package:loikmon/utils/Utility.dart';
 import 'package:loikmon/utils/my_colors.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-import '../models/Articles.dart';
-import '../models/ScreenArguements.dart';
 import '../utils/TextStyles.dart';
 
 class ItemTile extends StatelessWidget {
@@ -31,226 +31,224 @@ class ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final articlesModel = Provider.of<ArticlesModel>(context);
     final appState = Provider.of<AppStateManager>(context);
-    return Container(
-      height: 70.4,
-      width: double.infinity,
-      padding: EdgeInsets.fromLTRB(7, 2, 13, 0),
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final textPrimary =
+        isDark ? MyColors.textPrimaryDark : MyColors.textPrimaryLight;
+    final textSecondary =
+        isDark ? MyColors.textSecondaryDark : MyColors.textSecondaryLight;
+    final borderColor =
+        isDark ? MyColors.borderDark : MyColors.borderLight;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Row(
-              children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      ArticleViewerScreen.routeName,
-                      arguments: ScreenArguements(
-                        position: position,
-                        items: object,
-                        itemsList: items,
-                      ),
-                    );
-                  },
-                  child: Card(
-                    margin: EdgeInsets.all(0),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: 54,
-                          width: 70,
-                          child: CachedNetworkImage(
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                ArticleViewerScreen.routeName,
+                arguments: ScreenArguements(
+                  position:  position,
+                  items:     object,
+                  itemsList: items,
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ── Thumbnail ───────────────────────────
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: SizedBox(
+                      width:  72,
+                      height: 72,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
                             imageUrl: object.thumbnail!,
-                            imageBuilder: (context, imageProvider) => Container(
+                            fit:      BoxFit.cover,
+                            imageBuilder: (_, imageProvider) => DecoratedBox(
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: imageProvider,
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                        Colors.black12, BlendMode.darken)),
+                                  image: imageProvider,
+                                  fit:   BoxFit.cover,
+                                ),
                               ),
                             ),
-                            placeholder: (context, url) =>
-                                Center(child: CupertinoActivityIndicator()),
-                            errorWidget: (context, url, error) => Center(
-                                child: Icon(
-                              Icons.error,
-                              color: Colors.grey,
-                            )),
+                            placeholder: (_, __) => const Center(
+                                child: CupertinoActivityIndicator()),
+                            errorWidget: (_, __, ___) => const Center(
+                                child:
+                                    Icon(Icons.error, color: Colors.grey)),
+                          ),
+                          // Audio badge overlay
+                          if (object.streamUrl != '')
+                            Positioned(
+                              bottom: 4,
+                              right:  4,
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.55),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Icon(
+                                  LineAwesomeIcons.volume_up_solid,
+                                  color: Colors.white,
+                                  size:  11,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // ── Text block ──────────────────────────
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Author + date row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                object.author!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color:      textSecondary,
+                                  fontSize:   11,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              object.date!,
+                              style: TextStyle(
+                                color:    textSecondary,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        // Title
+                        Text(
+                          object.title!,
+                          maxLines:  2,
+                          overflow:  TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color:      textPrimary,
+                            fontSize:   14,
+                            fontWeight: FontWeight.w700,
+                            height:     1.35,
                           ),
                         ),
-                        Visibility(
-                          child: Positioned(
-                            top: 0,
-                            left: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(1),
-                              //width: 60,
+                        const SizedBox(height: 6),
+                        // Category + actions row
+                        Row(
+                          children: [
+                            // Category pill
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                  color: Colors.black12,
-                                  border: Border.all(
-                                    color: Colors.grey[300]!,
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2))),
-                              child: Text(
-                                isFree
-                                    ? index.toString()
-                                    : object.id.toString(),
-                                style: TextStyles.display1(context).copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10.0,
-                                  //fontFamily: "",
-                                  color: MyColors.white,
+                                color:
+                                    MyColors.accent.withOpacity(0.10),
+                                borderRadius:
+                                    BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: MyColors.accent
+                                      .withOpacity(0.25),
+                                  width: 1,
                                 ),
-                                maxLines: 1,
-                                textAlign: TextAlign.left,
+                              ),
+                              child: Text(
+                                object.category!.toUpperCase(),
+                                style: const TextStyle(
+                                  color:      MyColors.accent,
+                                  fontSize:   10,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.3,
+                                ),
                               ),
                             ),
-                          ),
+                            const Spacer(),
+                            // Bookmark icon
+                            Consumer<ArticleBookmarksModel>(
+                              builder:
+                                  (context, bookmarksModel, child) {
+                                bool isBookmarked = bookmarksModel
+                                    .isArticleBookMarked(object.id);
+                                return InkWell(
+                                  borderRadius:
+                                      BorderRadius.circular(8),
+                                  onTap: () {
+                                    if (isBookmarked)
+                                      bookmarksModel
+                                          .unBookmarkArticle(
+                                              object.id);
+                                    else
+                                      bookmarksModel
+                                          .bookmarkArticle(object);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Icon(
+                                      isBookmarked
+                                          ? LineAwesomeIcons.heart_solid
+                                          : LineAwesomeIcons.heart,
+                                      color: isBookmarked
+                                          ? Colors.red
+                                          : textSecondary,
+                                      size: 18,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 4),
+                            // Share icon
+                            InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () async {
+                                Utility.sharearticle(context, object);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Icon(
+                                  Icons.share_rounded,
+                                  color: MyColors.info,
+                                  size:  18,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ),
-                Container(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {},
-                            child: Text(
-                              object.author!,
-                              style: TextStyles.caption(context).copyWith(
-                                  //fontWeight: FontWeight.bold,
-                                  //fontFamily: 'style1',
-                                  fontSize: 12),
-                            ),
-                          ),
-                          Spacer(),
-                          Text(object.date!,
-                              style: TextStyles.caption(context).copyWith(
-                                  //fontFamily: 'style1',
-                                  fontSize: 12)
-                              //.copyWith(color: MyColors.grey_60),
-                              ),
-                        ],
-                      ),
-                      // Spacer(),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            ArticleViewerScreen.routeName,
-                            arguments: ScreenArguements(
-                                position: index,
-                                items: object,
-                                itemsList: items),
-                          );
-                        },
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(object.title!,
-                              maxLines: 1,
-                              textAlign: TextAlign.left,
-                              style: TextStyles.display1(context).copyWith(
-                                //color: MyColors.grey_80,
-                                fontWeight: FontWeight.w600,
-                                // fontFamily: 'style1',
-                              )),
-                        ),
-                      ),
-                      // Spacer(),
-                      Row(
-                        children: <Widget>[
-                          Text(object.category!.toUpperCase(),
-                              style: TextStyles.caption(context).copyWith(
-                                  //fontFamily: 'style1',
-                                  fontSize: 12)
-                              //.copyWith(color: MyColors.grey_60),
-                              ),
-                          Spacer(),
-                          Visibility(
-                            visible: object.streamUrl != "",
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 0),
-                              child: Icon(
-                                LineAwesomeIcons.volume_up_solid,
-                                // color: Colors.orange[900],
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 15,
-                            //margin: EdgeInsets.all(10),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Consumer<ArticleBookmarksModel>(
-                                builder: (context, bookmarksModel, child) {
-                                  bool isBookmarked = bookmarksModel
-                                      .isArticleBookMarked(object.id);
-                                  return InkWell(
-                                    child: Icon(
-                                        isBookmarked
-                                            ? LineAwesomeIcons.heart_solid
-                                            : LineAwesomeIcons.heart,
-                                        color: isBookmarked
-                                            ? Colors.red
-                                            : appState.isDarkModeOn
-                                                ? Colors.white
-                                                : Colors.black,
-                                        size: 18.0),
-                                    onTap: () {
-                                      if (isBookmarked)
-                                        bookmarksModel
-                                            .unBookmarkArticle(object.id);
-                                      else
-                                        bookmarksModel.bookmarkArticle(object);
-                                    },
-                                  );
-                                },
-                              ),
-                              Container(
-                                width: 15,
-                                //margin: EdgeInsets.all(10),
-                              ),
-                              InkWell(
-                                child: Icon(Icons.share,
-                                    color: Colors.lightBlue, size: 18.0),
-                                onTap: () async {
-                                  Utility.sharearticle(context, object);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
-          Container(
-            height: 6.3,
-          ),
+          // ── Divider ──────────────────────────────────────
           Divider(
-            height: 0.1,
-            //color: Colors.grey.shade800,
-          )
+            height:    1,
+            thickness: 1,
+            color:     borderColor,
+          ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:loikmon/models/Authors.dart';
 import 'package:loikmon/models/ScreenArguements.dart';
 import 'package:loikmon/screens/AuthorsListScreen.dart';
 import 'package:loikmon/utils/TextStyles.dart';
+import 'package:loikmon/utils/my_colors.dart';
 
 class AuthorsTile extends StatefulWidget {
   final Authors categories;
@@ -27,7 +30,7 @@ class _AuthorsTileState extends State<AuthorsTile> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 0), () {
+    Future.delayed(Duration.zero, () {
       setState(() {
         isfollowing = widget.categories.isfollowing!;
       });
@@ -36,126 +39,141 @@ class _AuthorsTileState extends State<AuthorsTile> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.only(right: 0.0),
+      padding: const EdgeInsets.only(right: 0),
       child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            AuthorsListScreen.routeName,
+            arguments: ScreenArguements(
+              position: 0,
+              items:    widget.categories,
+              check:    isfollowing,
+            ),
+          );
+        },
         child: Container(
-          // height: 250.0,
-          width: 120.0,
+          width: 140,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? MyColors.borderDark : MyColors.borderLight,
+              width: 1,
+            ),
+          ),
           child: Stack(
-            children: <Widget>[
-              Card(
-                elevation: 3,
-                child: Container(
-                  //height: 160,
-                  //margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(0),
-                    child: CachedNetworkImage(
-                      imageUrl: widget.categories.thumbnail!,
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      placeholder: (context, url) =>
-                          Center(child: CupertinoActivityIndicator()),
-                      errorWidget: (context, url, error) => Center(
-                          child: Icon(
-                        Icons.error,
-                        color: Colors.grey,
-                      )),
+            fit: StackFit.expand,
+            children: [
+              // ── Cover image ───────────────────────────────
+              CachedNetworkImage(
+                imageUrl: widget.categories.thumbnail!,
+                imageBuilder: (_, imageProvider) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit:   BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (_, __) =>
+                    const Center(child: CupertinoActivityIndicator()),
+                errorWidget: (_, __, ___) =>
+                    const Center(child: Icon(Icons.person, color: Colors.grey)),
+              ),
+
+              // ── Gradient scrim ───────────────────────────
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin:  Alignment.bottomCenter,
+                      end:    Alignment.topCenter,
+                      stops:  [0, 0.55],
+                      colors: [MyColors.glassBottom, MyColors.glassTop],
                     ),
                   ),
                 ),
               ),
+
+              // ── Glass name badge ─────────────────────────
               Positioned(
-                bottom: 5,
-                left: 5,
-                right: 5,
-                child: Container(
-                  color: Colors.black54,
-                  padding: EdgeInsets.only(
-                    top: 12,
-                    bottom: 12,
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          widget.categories.name!,
-                          style: TextStyles.display1(context).copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
-                            color: const Color.fromARGB(255, 246, 244, 244),
+                bottom: 0,
+                left:   0,
+                right:  0,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.30),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Name
+                          Text(
+                            widget.categories.name!,
+                            textAlign:  TextAlign.center,
+                            maxLines:   2,
+                            overflow:   TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color:      Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize:   14,
+                              height:     1.3,
+                            ),
                           ),
-                          // maxLines: 1,
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: 3.0),
-                      Container(
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          const SizedBox(height: 5),
+                          // Stats row
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text(
-                                t.articlesss +
-                                    ' ' +
-                                    widget.categories.articlescount.toString() +
-                                    ' ' +
-                                    t.articless,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: true,
-                                style: TextStyles.display1(context).copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 17,
-                                  color:
-                                      const Color.fromARGB(255, 246, 244, 244),
-                                ),
+                              _statChip(
+                                Icons.article_rounded,
+                                widget.categories.articlescount
+                                    .toString(),
                               ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                t.bookss +
-                                    ' ' +
-                                    widget.categories.bookscount.toString() +
-                                    ' ' +
-                                    t.booksss,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: true,
-                                style: TextStyles.display1(context).copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 17,
-                                  color:
-                                      const Color.fromARGB(255, 246, 244, 244),
-                                ),
+                              _statChip(
+                                Icons.menu_book_rounded,
+                                widget.categories.bookscount.toString(),
                               ),
                             ],
-                          )),
-                    ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
-        onTap: () {
-          Navigator.pushNamed(context, AuthorsListScreen.routeName,
-              arguments: ScreenArguements(
-                position: 0,
-                items: widget.categories,
-                check: isfollowing,
-              ));
-        },
       ),
+    );
+  }
+
+  Widget _statChip(IconData icon, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 11, color: Colors.white70),
+        const SizedBox(width: 3),
+        Text(
+          value,
+          style: const TextStyle(
+            color:      Colors.white70,
+            fontSize:   11,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }

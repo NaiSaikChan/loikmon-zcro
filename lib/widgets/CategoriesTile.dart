@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ import 'package:loikmon/models/Categories.dart';
 import 'package:loikmon/models/Itms.dart';
 import 'package:loikmon/models/ScreenArguements.dart';
 import 'package:loikmon/screens/CategoriesViewScreen.dart';
-import 'package:loikmon/utils/TextStyles.dart';
+import 'package:loikmon/utils/my_colors.dart';
 
 class CategoriesTile extends StatelessWidget {
   final Categories categories;
@@ -20,124 +22,161 @@ class CategoriesTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.only(right: 0.0),
+      padding: const EdgeInsets.only(right: 0),
       child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            CategoriesViewScreen.routeName,
+            arguments: ScreenArguements(
+              items: Itms(categories.id, categories.title, 0),
+            ),
+          );
+        },
         child: Container(
-          // height: 250.0,
-          width: 120.0,
+          width: 140,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? MyColors.borderDark : MyColors.borderLight,
+              width: 1,
+            ),
+          ),
           child: Stack(
-            children: <Widget>[
-              Card(
-                elevation: 3,
-                child: Container(
-                  //height: 160,
-                  //margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(0),
-                    child: CachedNetworkImage(
-                      imageUrl: categories.thumbnailUrl!,
-                      imageBuilder: (context, imageProvider) => Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      placeholder: (context, url) =>
-                          Center(child: CupertinoActivityIndicator()),
-                      errorWidget: (context, url, error) => Center(
-                          child: Icon(
-                        Icons.error,
-                        color: Colors.grey,
-                      )),
+            fit: StackFit.expand,
+            children: [
+              // ── Cover image ──────────────────────────────
+              CachedNetworkImage(
+                imageUrl: categories.thumbnailUrl!,
+                imageBuilder: (_, imageProvider) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit:   BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (_, __) =>
+                    const Center(child: CupertinoActivityIndicator()),
+                errorWidget: (_, __, ___) =>
+                    const Center(child: Icon(Icons.category, color: Colors.grey)),
+              ),
+
+              // ── Gradient scrim ───────────────────────────
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin:  Alignment.bottomCenter,
+                      end:    Alignment.topCenter,
+                      stops:  [0, 0.55],
+                      colors: [MyColors.glassBottom, MyColors.glassTop],
                     ),
                   ),
                 ),
               ),
+
+              // ── Glass label ──────────────────────────────
               Positioned(
-                bottom: 5,
-                left: 1,
-                right: 1,
-                child: Container(
-                  color: Colors.black54,
-                  padding: EdgeInsets.only(
-                    top: 12,
-                    bottom: 12,
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          categories.title!,
-                          style: TextStyles.display1(context).copyWith(
-                            color: const Color.fromARGB(255, 246, 245, 245),
-                            // fontWeight: FontWeight.bold,
-                            //fontFamily: 'style2',
-                            fontSize: 20.0,
+                bottom: 0,
+                left:   0,
+                right:  0,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.black.withOpacity(0.30),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Category name
+                          Text(
+                            categories.title!,
+                            textAlign: TextAlign.center,
+                            maxLines:  2,
+                            overflow:  TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color:      Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize:   14,
+                              height:     1.3,
+                            ),
                           ),
-                          // maxLines: 1,
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      SizedBox(height: 3.0),
-                      Container(
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          const SizedBox(height: 5),
+                          // Stats row
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text(
-                                t.articlesss +
-                                    ' ' +
-                                    categories.articlescount.toString() +
-                                    ' ' +
-                                    t.articless,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: true,
-                                style: TextStyles.display1(context).copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color:
-                                      const Color.fromARGB(255, 244, 243, 243),
-                                ),
+                              _statChip(
+                                Icons.article_rounded,
+                                categories.articlescount.toString(),
                               ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                t.bookss +
-                                    ' ' +
-                                    categories.bookscount.toString() +
-                                    ' ' +
-                                    t.booksss,
-                                overflow: TextOverflow.fade,
-                                maxLines: 1,
-                                softWrap: true,
-                                style: TextStyles.display1(context).copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color:
-                                      const Color.fromARGB(255, 246, 244, 244),
-                                ),
+                              _statChip(
+                                Icons.menu_book_rounded,
+                                categories.bookscount.toString(),
                               ),
                             ],
-                          )),
-                    ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              )
+              ),
+
+              // ── Accent top-right pip  ─────────────────────
+              Positioned(
+                top:   10,
+                right: 10,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color:        MyColors.accentGlow,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                        color: MyColors.accent.withOpacity(0.5), width: 1),
+                  ),
+                  child: Text(
+                    '#${index + 1}',
+                    style: const TextStyle(
+                      color:      MyColors.accentSoft,
+                      fontSize:   10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-        onTap: () {
-          Navigator.of(context).pushNamed(CategoriesViewScreen.routeName,
-              arguments: new ScreenArguements(
-                  items: Itms(categories.id, categories.title, 0)));
-        },
       ),
+    );
+  }
+
+  Widget _statChip(IconData icon, String value) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 11, color: Colors.white70),
+        const SizedBox(width: 3),
+        Text(
+          value,
+          style: const TextStyle(
+            color:      Colors.white70,
+            fontSize:   11,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 }
